@@ -22,7 +22,6 @@
         }
 
         .content-table thead tr{
-            background-color: #009879;
             color: #ffffff;
             text-align: left;
             font-weight: bold;
@@ -41,7 +40,7 @@
         }
 
         .content-table tbody tr:last-of-type{
-            border-bottom: 2px solid #009879;
+            border-bottom: 2px solid #6366F1;
         }
 
         html, body {
@@ -75,11 +74,10 @@
             }
             
 
-            echo "<h1>Emails classés par domaine</h1>";
+            echo "<h1 class='text-4xl font-bold text-gray-800 text-center mb-8'>Emails classés par domaine</h1>";
             foreach ($emails_par_domaine as $domaine => $Liste){
-                echo "<h2>Tableau des Emails :". $domaine . "</h2>";
-                echo "<table class='content-table'>";
-                echo "<thead><tr><th>Email</th></tr></thead>";
+                echo "<table class='content-table mx-auto px-4 w-full max-w-4xl text-left'>";
+                echo "<thead class='bg-indigo-500'><tr><th>Emails avec le domaine : @". $domaine . "</th></tr></thead>";
                 echo "<tbody>";
                 
                 foreach($Liste as $email){
@@ -94,6 +92,10 @@
             
 
             ?>
-    <a href="indexx.php" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded shadow"><button>Retour</button></a>
+
+    <a href="indexx.php" class="bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded shadow inline-flex items-center justify-center">
+        <button class="flex items-center justify-center">←</button>
+    </a>
+
     </body>
 </html>
