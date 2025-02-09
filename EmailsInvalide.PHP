@@ -4,8 +4,8 @@ $fichierEmailsInvalides = "adressesNonValides.txt";
 $fichierEmailsTries = "EmailsT.txt";
 
 // Vérifier si le fichier existe
-if (!file_exists($fichierEmails)) {
-    die("Le fichier Emails.txt n'existe pas.");
+if (!file_exists("Emails.txt")) {
+    file_put_contents("Emails.txt", ""); // Crée un fichier vide
 }
 
 // Lire les emails
