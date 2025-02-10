@@ -1,11 +1,13 @@
-<?php
+<?php 
+session_start();
+
 $fichierEmails = "Emails.txt";
 $fichierEmailsInvalides = "adressesNonValides.txt";
 $fichierEmailsTries = "EmailsT.txt";
 
 // Vérifier si le fichier existe
-if (!file_exists("Emails.txt")) {
-    file_put_contents("Emails.txt", ""); // Crée un fichier vide
+if (!file_exists($fichierEmails)) {
+    file_put_contents($fichierEmails, ""); // Crée un fichier vide
 }
 
 // Lire les emails
@@ -29,31 +31,33 @@ file_put_contents($fichierEmailsInvalides, implode("\n", $emailsInvalides) . "\n
 // Réécrire le fichier Emails.txt avec les emails valides
 file_put_contents($fichierEmails, implode("\n", $emailsValides) . "\n");
 
-// Fonction pour supprimer les doublons
-if (isset($_POST['supprimer_doublons'])) {
-    // Supprimer les doublons
-    $emailsValides = array_unique($emailsValides);  // Supprimer les doublons
-    
-    // Réécrire le fichier Emails.txt avec les emails sans doublons
-    file_put_contents($fichierEmails, implode("\n", $emailsValides) . "\n");
-
-    echo "Les doublons ont été supprimés avec succès.<br>";
-}
-
-// Fonction pour trier les emails
-if (isset($_POST['trier_emails'])) {
-    // Trier les emails
-    sort($emailsValides);  // Trier les emails
-
-    // Enregistrer les emails triés dans un nouveau fichier
+//  Vérifier si l'action demandée est un tri (GET request)
+if (isset($_GET['tri']) && $_GET['tri'] === "oui") {
+    // Trier les emails et les sauvegarder dans EmailsT.txt
+    sort($emailsValides);
     file_put_contents($fichierEmailsTries, implode("\n", $emailsValides) . "\n");
 
-    echo "Les emails ont été triés et enregistrés dans $fichierEmailsTries.<br>";
+    // Redirection vers index.php avec le mode trié
+    header("Location: indexx.php?tri=oui");
+    exit();
+}
+
+// suppression des doublons
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (isset($_POST['supprimer_doublons'])) {
+        $nbAvant = count($emailsValides);
+        $emailsValides = array_unique($emailsValides);
+        $nbApres = count($emailsValides);
+
+        if ($nbAvant === $nbApres) {
+            $_SESSION['message'] = "Aucun doublon trouvé.";
+        } else {
+            file_put_contents($fichierEmails, implode("\n", $emailsValides) . "\n");
+            $_SESSION['message'] = "Doublons supprimés avec succès !";
+        }
+
+        header("Location: indexx.php");
+        exit();
+    }
 }
 ?>
-
-<!-- Formulaire HTML pour supprimer les doublons et trier les emails -->
-<form method="POST">
-    <button type="submit" name="supprimer_doublons">Supprimer les doublons</button>
-    <button type="submit" name="trier_emails">Trier les emails</button>
-</form>
