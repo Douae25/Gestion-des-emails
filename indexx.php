@@ -8,6 +8,8 @@ if (!file_exists("Emails.txt")) {
 // Définition du pattern pour la validation des emails
 $email_pattern = "/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/";
 
+
+
 // Chargement des emails
 $emails = file("Emails.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 $email_frequency = [];
