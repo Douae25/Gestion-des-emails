@@ -1,5 +1,5 @@
 <?php include 'navbar.php'; ?>
-<?php   
+<?php    
 session_start();
 
 // Création du fichier s'il n'existe pas
@@ -9,6 +9,31 @@ if (!file_exists("Emails.txt")) {
 
 // Vérifier le mode d'affichage (trié ou non trié)
 $fichier = "Emails.txt"; 
+$fichierEmailsInvalides = "adressesNonValides.txt";
+
+// Lire les emails
+$emails = file($fichier, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+$emailsValides = [];
+$emailsInvalides = [];
+
+// Séparer les emails valides et invalides
+foreach ($emails as $email) {
+    $email = trim($email);
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $emailsValides[] = $email;
+    } else {
+        $emailsInvalides[] = $email;
+    }
+}
+
+// Enregistrer les emails invalides
+file_put_contents($fichierEmailsInvalides, implode("\n", $emailsInvalides) . "\n");
+
+// Réécrire le fichier Emails.txt avec les emails valides
+file_put_contents($fichier, implode("\n", $emailsValides) . "\n");
+
+
+
 if (isset($_GET['tri']) && $_GET['tri'] === "oui") { 
     $fichier = "EmailsT.txt";
 }
@@ -34,16 +59,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = trim($_POST['email']);
 
     if (!preg_match($email_pattern, $email)) {
-        $error_message = '⚠️ Email invalide.';
+        $error_message = '⚠ Email invalide.';
     } elseif (in_array($email, $emails)) {
-        $error_message = '⚠️ Email déjà enregistré.';
+        $error_message = '⚠ Email déjà enregistré.';
     } else {
         file_put_contents("Emails.txt", $email . "\n", FILE_APPEND);
         $email_frequency[$email] = 1;
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
