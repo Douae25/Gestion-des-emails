@@ -34,7 +34,7 @@ file_put_contents($fichierEmails, implode("\n", $emailsValides) . "\n");
 //  Vérifier si l'action demandée est un tri (GET request)
 if (isset($_GET['tri']) && $_GET['tri'] === "oui") {
     // Trier les emails et les sauvegarder dans EmailsT.txt
-    sort($emailsValides);
+     usort($emailsValides, 'strcasecmp');
     file_put_contents($fichierEmailsTries, implode("\n", $emailsValides) . "\n");
 
     // Redirection vers index.php avec le mode trié
