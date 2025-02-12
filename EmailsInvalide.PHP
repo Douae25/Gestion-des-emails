@@ -25,17 +25,14 @@ foreach ($emails as $email) {
     }
 }
 
-// Enregistrer les emails invalides
-file_put_contents($fichierEmailsInvalides, implode("\n", $emailsInvalides) . "\n");
-
-// Réécrire le fichier Emails.txt avec les emails valides
-file_put_contents($fichierEmails, implode("\n", $emailsValides) . "\n");
 
 //  Vérifier si l'action demandée est un tri (GET request)
 if (isset($_GET['tri']) && $_GET['tri'] === "oui") {
     // Trier les emails et les sauvegarder dans EmailsT.txt
-     usort($emailsValides, 'strcasecmp');
+    usort($emailsValides, 'strcasecmp');
     file_put_contents($fichierEmailsTries, implode("\n", $emailsValides) . "\n");
+
+    $_SESSION['message'] = "Les emails ont été triés avec succès.";
 
     // Redirection vers index.php avec le mode trié
     header("Location: indexx.php?tri=oui");
