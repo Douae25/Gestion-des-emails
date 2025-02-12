@@ -37,7 +37,7 @@
         }
 
         .content-table tbody tr:last-of-type{
-            border-bottom: 2px solid #6366F1;
+            border-bottom: 2px solid #d1d5db;
         }
 
          div {
@@ -75,7 +75,7 @@
             echo "<h1 class='text-4xl font-bold text-gray-800 text-center mb-8'>Emails classés par domaine</h1>";
             foreach ($emails_par_domaine as $domaine => $Liste){
                 echo "<table class='content-table mx-auto px-4 w-full max-w-4xl text-left'>";
-                echo "<thead class='bg-indigo-500'><tr><th>Emails avec le domaine : @". $domaine . "</th></tr></thead>";
+                echo "<thead class='bg-gray-400'><tr><th>Emails avec le domaine : @". $domaine . "</th></tr></thead>";
                 echo "<tbody>";
                 
                 foreach($Liste as $email){
@@ -91,7 +91,7 @@
 
             ?>
 
-    <a href="indexx.php" class="bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded shadow inline-flex items-center justify-center">
+    <a href="indexx.php" class="bg-gray-900 text-white px-4 py-2 rounded shadow inline-flex items-center">
         <button class="flex items-center justify-center">←</button>
     </a>
 
