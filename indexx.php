@@ -1,3 +1,4 @@
+<?php include 'navbar.php'; ?>
 <?php   
 session_start();
 
@@ -51,8 +52,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <title>Gestion des Emails</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col items-center p-10">
-
+<body>
+<div class="bg-gray-100 min-h-screen flex flex-col items-center p-10">
     <h1 class="text-3xl font-bold text-gray-800 mb-8">📧 Gestion des Emails</h1>
 
     <button onclick="toggleModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow mb-6">
@@ -165,6 +166,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         modal.classList.toggle("hidden");
     }
     </script>
-
+    </div>
 </body>
 </html>
