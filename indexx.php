@@ -145,7 +145,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </form>
         
         <a href="domaine_emails.php" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md transition duration-300 text-center">
-            🏷 Séparer par domaine
+            🏷️ Séparer par domaine
         </a>
         
         <button onclick="toggleMenu()" class="bg-green-500 hover:bg-green-600 text-white px-7 py-2 rounded-lg shadow-md transition duration-300 inline-flex items-center">
