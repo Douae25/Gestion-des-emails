@@ -1,6 +1,11 @@
 <?php   
 session_start();
 
+// Création du fichier s'il n'existe pas
+if (!file_exists("Emails.txt")) {
+    file_put_contents("Emails.txt", "");
+}
+
 // Vérifier le mode d'affichage (trié ou non trié)
 $fichier = "Emails.txt"; 
 if (isset($_GET['tri']) && $_GET['tri'] === "oui") { 
@@ -12,8 +17,13 @@ $emails = file($fichier, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
 
 // Chargement des emails enregistrés
 $email_frequency = [];
+// Calcul des fréquences
 foreach ($emails as $email) {
-    $email_frequency[$email] = isset($email_frequency[$email]) ? $email_frequency[$email] + 1 : 1;
+    if (!isset($email_frequency[$email])) {
+        $email_frequency[$email] = 1;
+    } else {
+        $email_frequency[$email]++;
+    }
 }
 
 $error_message = '';
@@ -158,3 +168,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 </body>
 </html>
+
