@@ -1,17 +1,22 @@
-<?php
+<?php   
+session_start();
 
 // Création du fichier s'il n'existe pas
 if (!file_exists("Emails.txt")) {
     file_put_contents("Emails.txt", "");
 }
 
-// Définition du pattern pour la validation des emails
-$email_pattern = "/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/";
+// Vérifier le mode d'affichage (trié ou non trié)
+$fichier = "Emails.txt"; 
+if (isset($_GET['tri']) && $_GET['tri'] === "oui") { 
+    $fichier = "EmailsT.txt";
+}
 
-// Chargement des emails
-$emails = file("Emails.txt", FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+// Lire les emails depuis le fichier choisi
+$emails = file($fichier, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [];
+
+// Chargement des emails enregistrés
 $email_frequency = [];
-
 // Calcul des fréquences
 foreach ($emails as $email) {
     if (!isset($email_frequency[$email])) {
@@ -22,29 +27,20 @@ foreach ($emails as $email) {
 }
 
 $error_message = '';
-
-$error_message = '';
 $email_pattern = "/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = trim($_POST['email']);
 
     if (!preg_match($email_pattern, $email)) {
-        $error_message = '⚠ Email invalide.';
+        $error_message = '⚠️ Email invalide.';
     } elseif (in_array($email, $emails)) {
-        $error_message = '⚠ Email déjà enregistré.';
+        $error_message = '⚠️ Email déjà enregistré.';
     } else {
         file_put_contents("Emails.txt", $email . "\n", FILE_APPEND);
         $email_frequency[$email] = 1;
-        
-        // Recharge la page après l'ajout
-        header("Location: " . $_SERVER["PHP_SELF"]);
-        exit();
     }
 }
-
-
-
 ?>
 
 <!DOCTYPE html>
@@ -83,7 +79,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         </div>
     </div>
 
-    <!-- Tableau des emails -->
+
+    <?php
+    if (isset($_SESSION['message'])) {
+        echo "<div class='bg-green-200 text-green-800 p-3 rounded mb-4'>{$_SESSION['message']}</div>";
+        unset($_SESSION['message']); 
+    }
+    ?>
+
+    <!-- Tableau et boutons repositionnés -->
     <div class="flex gap-6 w-full max-w-4xl mt-6">
         <div class="flex-1 bg-white shadow-lg rounded-lg overflow-hidden">
             <table class="table-auto w-full text-left">
@@ -96,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <tbody class="text-gray-600 text-sm font-light">
                     <?php foreach ($email_frequency as $email => $frequency): ?>
                         <tr class="border-b border-gray-200 hover:bg-gray-100">
-                            <td class="p-4 <?= (!empty($email) && preg_match($email_pattern, $email)) ? '' : 'text-red-500' ?>">
+                            <td class="p-4 <?= !preg_match($email_pattern, $email) ? 'text-red-500' : '' ?>">
                                 <?= htmlspecialchars($email) ?>
                             </td>
                             <td class="p-4"><?= $frequency ?></td>
@@ -106,22 +110,57 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             </table>
         </div>
 
-        <!-- Boutons supplémentaires -->
+        <!-- Boutons déplacés à droite du tableau -->
         <div class="flex flex-col gap-4">
-            <a href="supprimer_doublons.php" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded shadow w-52 text-center">
-                🔄 Supprimer Doublons
+            <form method="POST" action="EmailsInvalide.php">
+                <button type="submit" name="supprimer_doublons"
+                    class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow-md transition duration-300">
+                    🔄 Supprimer les doublons
+                </button>
+            </form>
+            
+            <a href="domaine_emails.php" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-md transition duration-300 text-center">
+                🏷 Séparer par domaine
             </a>
-            <a href="trier_enregistrer.php" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow w-52 text-center">
-                📑 Trier & Enregistrer
-            </a>
-            <a href="domaine_emails.php" class="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded shadow w-52 text-center">
-                🏷 Séparer Domaines
-            </a>
+            
+
+            <div class="relative">
+            <button onclick="toggleMenu()" class="bg-green-500 hover:bg-green-600 text-white px-7 py-2 rounded-lg shadow-md transition duration-300 inline-flex items-center">
+                    📑 Mode d'affichage
+                    <svg class="w-4 h-4 ml-2 transition-transform duration-300" id="arrowIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </button>
+                <div id="menu" class="hidden absolute bg-white shadow-lg rounded-lg p-2 mt-2">
+                    <a href="EmailsInvalide.php?tri=oui" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">📌 Tableau trié</a>
+                    <a href="indexx.php" class="block px-4 py-2 text-gray-800 hover:bg-gray-200 rounded-md">📋 Tableau non trié</a>
+                </div>
+            </div>
+
+
         </div>
     </div>
 
     <script>
-    function toggleModal() {
+        function validerEmail() {
+            let email = document.getElementById("email").value;
+            let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            let erreur = document.getElementById("erreur");
+
+            if (!regex.test(email)) {
+                erreur.classList.remove("hidden");
+                return false;
+            } else {
+                erreur.classList.add("hidden");
+                return true;
+            }
+        }
+
+        function toggleMenu() {
+            document.getElementById("menu").classList.toggle("hidden");
+        }
+
+        function toggleModal() {
         let modal = document.getElementById("emailModal");
         modal.classList.toggle("hidden");
     }
@@ -129,3 +168,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 </body>
 </html>
+
