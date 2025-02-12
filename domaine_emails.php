@@ -17,9 +17,6 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
         }
 
-        * {
-            font-family: 'Quicksand', sans-serif;
-        }
 
         .content-table thead tr{
             color: #ffffff;
@@ -43,7 +40,7 @@
             border-bottom: 2px solid #6366F1;
         }
 
-        html, body {
+         div {
             margin: 0;
             padding: 15px;
             line-height: 1.6;
@@ -51,8 +48,9 @@
 
     </style>
     <body>
-        
-            <?php
+    <?php include 'navbar.php'; ?>
+    <div>
+    <?php
             $fichier="Emails.txt";
 
             if (!file_exists("Emails.txt")) {
@@ -96,6 +94,8 @@
     <a href="indexx.php" class="bg-gray-900 hover:bg-gray-700 text-white px-4 py-2 rounded shadow inline-flex items-center justify-center">
         <button class="flex items-center justify-center">←</button>
     </a>
+
+    </div>
 
     </body>
 </html>
