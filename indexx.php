@@ -53,7 +53,7 @@ foreach ($emails as $email) {
 }
 
 $error_message = '';
-$email_pattern = "/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/";
+$email_pattern = "/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $email = trim($_POST['email']);
@@ -80,30 +80,20 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <div class="bg-gray-100 min-h-screen flex flex-col items-center p-10">
     <h1 class="text-3xl font-bold text-gray-800 mb-8">📧 Gestion des Emails</h1>
 
-    <button onclick="toggleModal()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow mb-6">
-        Ajouter
-    </button>
-
-    <!-- Modale -->
-    <div id="emailModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 <?= $error_message ? '' : 'hidden' ?>">
-        <div class="bg-white p-6 rounded-lg w-96">
-            <h2 class="text-xl font-bold mb-4">Ajouter un Email</h2>
-            <form action="" method="POST" class="flex flex-col gap-4">
-                <input type="text" name="email" placeholder="Entrez un email" required value="<?= isset($_POST['email']) ? htmlspecialchars($_POST['email']) : '' ?>"
-                    class="border border-gray-300 p-2 rounded w-full focus:ring-2 focus:ring-blue-400">
-                <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow">
-                    Ajouter
-                </button>
-            </form>
-
-            <?php if ($error_message): ?>
+  
+    
+    <form action="" method="POST" onsubmit="return validerEmail();" 
+        class="bg-white shadow-lg rounded-lg p-6 w-full max-w-lg mb-6 flex gap-2">
+        <input type="email" name="email" id="email" placeholder="Entrez un email" required 
+            class="border border-gray-300 p-2 rounded w-full focus:ring-2 focus:ring-blue-400">
+        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded shadow">
+            Ajouter
+        </button>
+    </form>
+    <?php if ($error_message): ?>
                 <p class="text-red-500 text-sm mt-4"><?= htmlspecialchars($error_message) ?></p>
             <?php endif; ?>
-
-            <button onclick="toggleModal()" class="mt-4 bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded shadow w-full">Fermer</button>
-        </div>
-    </div>
-
+    <p id="erreur" class="text-red-500 text-sm hidden">⚠ Email invalide !</p>
 
     <?php
     if (isset($_SESSION['message'])) {
@@ -164,10 +154,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <script>
         function validerEmail() {
             let email = document.getElementById("email").value;
-            let regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            let regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
             let erreur = document.getElementById("erreur");
 
             if (!regex.test(email)) {
+                erreur.textContent = "⚠ L'adresse saisie est invalide.";
                 erreur.classList.remove("hidden");
                 return false;
             } else {
@@ -176,14 +167,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             }
         }
 
+// Ajout d'un écouteur d'événement pour valider en temps réel
+document.getElementById("email").addEventListener("input", validerEmail);
+
+
         function toggleMenu() {
             document.getElementById("menu").classList.toggle("hidden");
         }
 
-        function toggleModal() {
-        let modal = document.getElementById("emailModal");
-        modal.classList.toggle("hidden");
-    }
+ 
     </script>
     </div>
 </body>
